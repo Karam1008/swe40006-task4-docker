@@ -1,0 +1,14 @@
+# Secrets and local configuration
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# logalyzer runtime data (keep the folders, not the contents)
+task4.4-logalyzer/data/input/*
+task4.4-logalyzer/data/output/*
+!task4.4-logalyzer/data/input/.gitkeep
+!task4.4-logalyzer/data/output/.gitkeep

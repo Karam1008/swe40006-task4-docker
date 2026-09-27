@@ -1,0 +1,20 @@
+# SITE_ADDRESS is set in .env
+#   :80                         -> plain HTTP on port 80
+#   54-1-2-3.sslip.io           -> automatic HTTPS certificate + HTTP->HTTPS redirect
+{$SITE_ADDRESS}
+
+encode gzip
+
+reverse_proxy web:8000
+
+header {
+	X-Content-Type-Options nosniff
+	X-Frame-Options DENY
+	Referrer-Policy strict-origin-when-cross-origin
+	-Server
+}
+
+log {
+	output stdout
+	format console
+}

@@ -1,0 +1,12 @@
+# Keep the build context small and keep secrets out of image layers
+.git/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.venv/
+Dockerfile*
+compose*.yaml
+Caddyfile
+README.md

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ info.app }} - SWE40006 Task 4.3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --harbour: #1B2A3A;   /* container door */
+      --signal:  #F5C400;   /* stencil paint / ID plate */
+      --steel:   #5B7083;
+      --fog:     #E6EBEF;   /* page */
+      --sheet:   #FFFFFF;
+      --ink:     #17222D;
+      --alert:   #B3261E;
+      --rule:    #C9D3DB;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --fog: #121B24; --sheet: #1A2632; --ink: #E4EAEF; --rule: #2E3E4E; --steel: #93A6B8; }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--fog); color: var(--ink);
+      font: 400 1.0625rem/1.55 "Barlow", "Segoe UI", system-ui, sans-serif;
+    }
+    .door {
+      background-color: var(--harbour);
+      background-image: repeating-linear-gradient(90deg,
+        rgba(255,255,255,.06) 0 14px, rgba(0,0,0,.18) 14px 18px, transparent 18px 32px);
+      color: #fff; padding-block: 2.5rem 2rem;
+    }
+    .wrap { max-width: 44rem; margin: 0 auto; padding-inline: 1.25rem; }
+    .wordmark {
+      font-family: "Saira Stencil One", Impact, "Arial Narrow", sans-serif;
+      font-weight: 400; font-size: clamp(3rem, 12vw, 5.5rem); line-height: .95;
+      color: var(--signal); margin: 0; letter-spacing: .02em;
+    }
+    .tagline { margin: .75rem 0 1.75rem; color: #C9D6E2; max-width: 34rem; }
+    .plate {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+      gap: 0; border: 2px solid var(--signal); background: rgba(0,0,0,.25);
+    }
+    .plate div { padding: .6rem .8rem; border-right: 1px solid rgba(245,196,0,.35); }
+    .plate div:last-child { border-right: 0; }
+    .plate dt { font-size: .8rem; color: #AFC0CF; }
+    .plate dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+    main { padding-block: 2rem 3rem; }
+    h2 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .75rem; }
+    form { background: var(--sheet); border: 1px solid var(--rule); padding: 1.25rem; margin-bottom: 2.25rem; }
+    label { display: block; font-weight: 500; margin-bottom: .3rem; }
+    textarea, input[type=text] {
+      width: 100%; font: inherit; color: inherit; background: transparent;
+      border: 1px solid var(--rule); padding: .55rem .65rem; margin-bottom: 1rem;
+    }
+    textarea { min-height: 5.5rem; resize: vertical; }
+    button {
+      font: 600 1rem "Barlow", sans-serif; background: var(--signal); color: var(--harbour);
+      border: 0; padding: .65rem 1.25rem; cursor: pointer;
+    }
+    button:hover { filter: brightness(.95); }
+    :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+    .error { border-left: 4px solid var(--alert); background: var(--sheet); padding: .8rem 1rem; margin-bottom: 1.5rem; }
+    ol.manifest { list-style: none; margin: 0; padding: 0; background: var(--sheet); border: 1px solid var(--rule); }
+    ol.manifest li { padding: .9rem 1.1rem; border-bottom: 1px solid var(--rule); }
+    ol.manifest li:last-child { border-bottom: 0; }
+    .note-text { margin: 0 0 .35rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .note-meta { font-size: .85rem; color: var(--steel); }
+    .empty { color: var(--steel); }
+    footer { font-size: .85rem; color: var(--steel); padding-block: 0 2rem; }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <header class="door">
+    <div class="wrap">
+      <h1 class="wordmark">{{ info.app }}</h1>
+      <p class="tagline">Leave a note about a deployment. Notes are stored in Redis, in a separate container on a private network.</p>
+      <dl class="plate" aria-label="Container serving this page">
+        <div><dt>Served by container</dt><dd>{{ info.container_hostname }}</dd></div>
+        <div><dt>Image version</dt><dd>{{ info.version }}</dd></div>
+        <div><dt>Environment</dt><dd>{{ info.environment }}</dd></div>
+        <div><dt>Page visits</dt><dd>{{ visits if visits is not none else "unavailable" }}</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% if storage_error %}
+      <p class="error" role="alert">{{ storage_error }} Check that the redis service is running with <code>docker compose ps</code>.</p>
+    {% endif %}
+
+    <form method="post" action="/notes">
+      <h2>Add a note</h2>
+      <label for="text">Note</label>
+      <textarea id="text" name="text" maxlength="{{ max_len }}" required placeholder="Pushed 1.0.0 to Docker Hub and pulled it on the EC2 host."></textarea>
+      <label for="author">Your name (optional)</label>
+      <input id="author" name="author" type="text" maxlength="40" autocomplete="name">
+      <button type="submit">Add note</button>
+    </form>
+
+    <h2>Notes</h2>
+    {% if notes %}
+      <ol class="manifest">
+        {% for note in notes %}
+          <li>
+            <p class="note-text">{{ note.text }}</p>
+            <span class="note-meta">{{ note.author }}, {{ note.created_utc }}, written by container {{ note.served_by }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    {% elif not storage_error %}
+      <p class="empty">No notes yet. Add the first one above.</p>
+    {% endif %}
+  </main>
+
+  <footer class="wrap">SWE40006 Task 4.3. Machine-readable status: <a href="/api/info">/api/info</a> and <a href="/healthz">/healthz</a>.</footer>
+</body>
+</html>

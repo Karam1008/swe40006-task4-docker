@@ -1,0 +1,28 @@
+# SWE40006 Task 4.4 - long-running watcher service
+#   docker compose up -d        start the watcher
+#   docker compose logs -f      follow its lifecycle
+#   docker compose stop         SIGTERM -> graceful shutdown, exit code 0
+name: logalyzer
+
+services:
+  watcher:
+    image: ${DOCKERHUB_USER:?Set DOCKERHUB_USER}/swe40006-logalyzer:1.0.0
+    build: .
+    command: ["watch", "--interval", "10"]
+    restart: unless-stopped
+    read_only: true              # root filesystem is immutable
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    stop_grace_period: 15s
+    environment:
+      LOG_LEVEL: INFO
+    volumes:
+      - ./data/input:/data/input:ro     # bind mount: host drops logs here
+      - ./data/output:/data/output      # bind mount: reports appear on the host
+      - logalyzer_state:/data/state     # named volume: history survives recreation
+
+volumes:
+  logalyzer_state:
+    external: true               # created once with `docker volume create logalyzer_state`
+    name: logalyzer_state        # and shared with the `docker run` examples
