@@ -7,9 +7,9 @@ two hosts: Docker Desktop (Windows 11, WSL 2) and an AWS EC2 Amazon Linux 2023 h
 | Level | Folder | What it is | Image |
 |---|---|---|---|
 | 4.1 Pass | - | Docker Desktop install + `hello-world` | `hello-world` |
-| 4.2 Credit | `task4.2-flask-basic/` | Basic Flask JSON app on a designated port | `<user>/swe40006-flask-basic` |
-| 4.3 Distinction | `task4.3-docknotes/` | DockNotes: FastAPI + Redis + Caddy, optimised multi-stage build, isolated networks | `<user>/swe40006-docknotes` |
-| 4.4 High Distinction | `task4.4-logalyzer/` | logalyzer: non-web access-log analysis CLI with volumes, tests and graceful lifecycle | `<user>/swe40006-logalyzer` |
+| 4.2 Credit | `task4.2-flask-basic/` | Basic Flask JSON app on a designated port | `karamjot1008/swe40006-flask-basic` |
+| 4.3 Distinction | `task4.3-docknotes/` | DockNotes: FastAPI + Redis + Caddy, optimised multi-stage build, isolated networks | `karamjot1008/swe40006-docknotes` |
+| 4.4 High Distinction | `task4.4-logalyzer/` | logalyzer: non-web access-log analysis CLI with volumes, tests and graceful lifecycle | `karamjot1008/swe40006-logalyzer` |
 
 ```
 .
