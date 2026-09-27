@@ -12,7 +12,7 @@ two hosts: Docker Desktop (Windows 11, WSL 2) and an AWS EC2 Amazon Linux 2023 h
 | 4.4 High Distinction | `task4.4-logalyzer/` | logalyzer: non-web access-log analysis CLI with volumes, tests and graceful lifecycle | `karamjot1008/swe40006-logalyzer` |
 
 ```
-.
+
 ├── task4.2-flask-basic/     app.py, requirements.txt, Dockerfile
 ├── task4.3-docknotes/       app/, Dockerfile, Dockerfile.naive, compose.yaml, Caddyfile, .env.example
 ├── task4.4-logalyzer/       logalyzer/, tests/, Dockerfile, compose.yaml, data/
@@ -34,4 +34,4 @@ cd task4.3-docknotes; docker compose up -d --build
 cd task4.4-logalyzer
 docker build -t logalyzer:1.0.0 .
 docker run --rm logalyzer:1.0.0 --help
-``
+
